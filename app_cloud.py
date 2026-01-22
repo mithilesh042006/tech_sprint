@@ -10,37 +10,39 @@ import os
 import time
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-# Import config
-import config
 
 # Database setup
 def get_db_path():
-    """Get database path - use persistent disk on Render"""
-    if os.environ.get('RENDER'):
-        return '/data/violations.db'
-    return config.DATABASE_PATH
+    """Get database path - use current directory (works on all platforms)"""
+    # Use current directory for database (works on Render free tier)
+    return os.path.join(os.getcwd(), 'violations.db')
 
 def init_db():
     """Initialize the database with required tables."""
-    db_path = get_db_path()
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS violations (
-        id INTEGER PRIMARY KEY,
-        student_id TEXT,
-        exam_name TEXT,
-        violation TEXT,
-        time TEXT,
-        warning_count INTEGER,
-        screenshot TEXT
-    )''')
-    conn.commit()
-    conn.close()
+    try:
+        db_path = get_db_path()
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS violations (
+            id INTEGER PRIMARY KEY,
+            student_id TEXT,
+            exam_name TEXT,
+            violation TEXT,
+            time TEXT,
+            warning_count INTEGER,
+            screenshot TEXT
+        )''')
+        conn.commit()
+        conn.close()
+        print(f"Database initialized at: {db_path}")
+    except Exception as e:
+        print(f"Warning: Could not initialize database: {e}")
 
 # Initialize database on startup
 init_db()
+
 
 def get_records_from_db():
     """Fetch all violation records from SQLite DB."""
