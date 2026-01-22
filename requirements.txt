@@ -1,0 +1,7 @@
+Flask
+opencv-python
+mediapipe
+ultralytics
+pyttsx3
+numpy
+Pillow
