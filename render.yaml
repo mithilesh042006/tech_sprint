@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: exam-surveillance
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: EMAIL_ADDRESS
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: AUTHORITY_EMAIL
+        sync: false
+      - key: HIGHER_AUTHORITY_EMAIL
+        sync: false
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

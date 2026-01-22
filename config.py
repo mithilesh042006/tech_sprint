@@ -63,11 +63,21 @@ WARNING_COOLDOWN = 5.0
 EXAM_DURATION_SECONDS = EXAM_DURATION_MINUTES * 60
 
 # Email configuration for Gmail alerts
-# IMPORTANT: Replace with your real Gmail details
+# IMPORTANT: On Render, set these as environment variables
 # 1. Enable 2FA on your Gmail account
 # 2. Generate an App Password: https://myaccount.google.com/apppasswords
-# 3. Use the App Password below (NOT your regular password)
-EMAIL_ADDRESS = "yourgmail@gmail.com"  # Your Gmail address
-EMAIL_PASSWORD = "abcd-efgh-ijkl-mnop"  # 16-character App Password
-AUTHORITY_EMAIL = "authority@gmail.com"  # Email to receive alerts
-HIGHER_AUTHORITY_EMAIL = "higherauthority@gmail.com"  # Higher authority email for malpractice booking
+# 3. Set environment variables in Render dashboard
+
+import os
+
+EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS", "yourgmail@gmail.com")
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "abcd-efgh-ijkl-mnop")
+AUTHORITY_EMAIL = os.environ.get("AUTHORITY_EMAIL", "authority@gmail.com")
+HIGHER_AUTHORITY_EMAIL = os.environ.get("HIGHER_AUTHORITY_EMAIL", "higherauthority@gmail.com")
+
+# Database path (use /data for Render persistent disk)
+DATABASE_PATH = os.environ.get("DATABASE_PATH", "violations.db")
+
+# Cloud deployment flag
+IS_CLOUD = os.environ.get("RENDER", False) or os.environ.get("IS_CLOUD", False)
+
